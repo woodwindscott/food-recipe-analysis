@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+
+    <script>
+        // Solve the issue in the following example:
+
+        var profile = {
+          name: 'Alex',
+          getName() {
+            console.log("Working");
+
+            var innerGetName = function(){
+              return this.name;
+              console.log(innerGetName);
+            }
+            return innerGetName();
+            console.log("Working");
+          }
+        };
+        
+        console.log(profile.getName());
+        
+        </script>
+</body>

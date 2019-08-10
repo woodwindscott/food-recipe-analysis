@@ -2,17 +2,21 @@ $(document).ready(function() {
 
     recipeAppID = "36ebdbad";
     recipeAPIKey = "6800e54637175837e7457dddad91fdf9";
+
+    nutritionAppID = "92b9868a";
+    nutritionAPIKey = "b85dca31bdd750ae0c2d4fcc2095bafe";
     
 
-    $("#submit").on("click", function(event) {
+    // Request for Recipes
+    $("#submit-recipe").on("click", function(event) {
 
         event.preventDefault();
 
         $(".display-recipes").empty();
 
-        var queryTerm = $("#search-terms").val().trim();
+        var recipeQueryTerm = $("#search-terms").val().trim();
         // recipeQueryURL = "https://api.edamam.com/search?q=chicken&app_id=$" + recipeAppID + "&app_key=$" + recipeAPIKey + "&from=0&to=3&calories=591-722&health=alcohol-free";
-        recipeQueryURL = "https://api.edamam.com/search?q=" + queryTerm + "&app_id=$" + recipeAppID + "&app_key=$" + recipeAPIKey + "&from=0&to=10";
+        recipeQueryURL = "https://api.edamam.com/search?q=" + recipeQueryTerm + "&app_id=$" + recipeAppID + "&app_key=$" + recipeAPIKey + "&from=0&to=10";
 
 
 
@@ -36,11 +40,6 @@ $(document).ready(function() {
                 console.log(results[i].recipe.url);
                 console.log(results[i].recipe.label);
 
-                // var recipeName = $("<button>");
-                // recipeName.text(results[i].recipe.label);
-                // recipeName.addClass("recipeLink");
-                // recipeName.attr("data-link", results[i].recipe.url)
-
                 var recipeName = $("<a>");
                 recipeName.text(results[i].recipe.label);
                 recipeName.addClass("recipeLink");
@@ -59,7 +58,70 @@ $(document).ready(function() {
 
         });
 
-    // End of onclick function for submit button
+    // End of onclick function for recipe request submit button
+    });
+
+    // Request for nutrition - my Recipes
+    $("#submit-my-recipe").on("click", function(event) {
+
+        event.preventDefault();
+
+        $(".display-recipes").empty();
+
+        var myRecipeTitle = $("#my-recipe-name").val().trim();
+        var myRecipeServings = $("#my-recipe-servings").val().trim();
+        var myRecipeIngredients = $("#my-recipe-ingredients").val().split('\n');
+
+
+        var myRecipeJSON = {
+            "title": myRecipeTitle,
+            "yield": myRecipeServings,
+            "ingr": myRecipeIngredients
+        }
+
+        console.log(myRecipeJSON);
+        var mydataFile = JSON.stringify(myRecipeJSON);
+
+        $.ajax({
+            url: "https://api.edamam.com/api/nutrition-details?app_id=92b9868a&app_key=b85dca31bdd750ae0c2d4fcc2095bafe",
+            method: "POST",
+            contentType: 'application/json',
+            data: mydataFile
+    
+        }).then(function(response) {
+    
+            console.log(response);
+    
+        });
+
+    });
+
+
+
+    $("#submit-ingredient").on("click", function(event) {
+
+        event.preventDefault();
+
+        $(".display-recipes").empty();
+
+        var ingredient = $("#ingredient-entry").val().trim();
+        var ingredientEntry = encodeURI(ingredient);
+
+        var nutritionQueryURL = "https://api.edamam.com/api/nutrition-data?app_id=" + nutritionAppID + "&app_key=" + nutritionAPIKey + "&ingr=" + ingredientEntry;
+
+        //&ingr=1%20large%20apple
+        $.ajax({
+            url: nutritionQueryURL,
+            method: "GET"
+        }).then(function(response) {
+
+            console.log(response);
+
+
+
+        });
+
+
     });
 
 });
